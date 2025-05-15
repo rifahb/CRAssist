@@ -34,7 +34,7 @@ export default function Login() {
         localStorage.setItem("token", response.data.token);
 
         // Set user info in context
-        login(usn);
+        login(response.data.token);
 
         // Navigate to the profile or dashboard
         navigate("/profile");

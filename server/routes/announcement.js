@@ -1,6 +1,6 @@
 const express = require('express');
 const Announcement = require('../models/announcement');
-const { protect } = require('./auth'); // Protect routes with JWT
+const { protect , checkCRRole} = require('./auth'); // Protect routes with JWT
 const router = express.Router();
 
 // Get all announcements (no auth required)
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create an announcement (auth required)
-router.post('/', protect, async (req, res) => {
+router.post('/', protect,checkCRRole, async (req, res) => {
   const { title, content } = req.body;
   try {
     const newAnnouncement = new Announcement({ title, content });

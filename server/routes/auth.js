@@ -44,7 +44,6 @@ const protect = (req, res, next) => {
   const token = req.header("Authorization")?.split(" ")[1]; // Get the token from Authorization header
 
   if (!token) return res.status(401).json({ message: "Not authorized" });
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);  // Verify the token
     req.user = decoded;  // Store the decoded info in the request
@@ -54,8 +53,14 @@ const protect = (req, res, next) => {
   }
 };
 
-
+const checkCRRole = (req, res, next) => {
+  if (req.user.role !== "cr") {
+    return res.status(403).json({ message: "Access denied: Only CRs can post announcements" });
+  }
+  next();
+};
 module.exports = {
   router,
   protect,
+   checkCRRole,
 };

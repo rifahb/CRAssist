@@ -10,7 +10,9 @@ import Register from "./pages/Register";
 import Feedback from "./pages/Feedback";
 import Help from "./pages/HelpPage"; // Help Page
 import About from "./pages/About"; // About Page
+import ViewIssues from "./pages/ViewIssues";
 import { useAuth } from "./context/authContext";
+
 
 function App() {
   const { user } = useAuth();
@@ -40,6 +42,17 @@ function App() {
             <Route path="/polls" element={<Polls />} />
             <Route path="/issue" element={<Issue />} />
             <Route path="/feedback" element={<Feedback />} />
+            <Route
+  path="/viewissues"
+  element={
+    user?.role === "cr" ? (
+      <ViewIssues />
+    ) : (
+      <Navigate to="/profile" replace />
+    )
+  }
+/>
+            
 
           </>
         )}

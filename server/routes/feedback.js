@@ -22,5 +22,12 @@ router.get("/", verifyToken, async (req, res) => {
   const feedbacks = await Feedback.find().populate("user", "name usn email");
   res.json(feedbacks);
 });
-
+router.get("/my", verifyToken, async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find({ usn: req.user.usn }).sort({ createdAt: -1 });
+    res.json(feedbacks);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 module.exports = router;

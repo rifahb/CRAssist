@@ -1,9 +1,14 @@
 import Layout from "../components/Layout";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
     const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+const [myIssues, setMyIssues] = useState([]);
+const [myFeedback, setMyFeedback] = useState([]);
+ const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchAnnouncements() {
@@ -18,6 +23,23 @@ export default function Dashboard() {
     }
     fetchAnnouncements();
   }, []);
+  useEffect(() => {
+  async function fetchActivity() {
+    const token = localStorage.getItem("token");
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+    // Fetch user's issues
+    const issuesRes = await axios.get("http://localhost:5000/api/issues/my", config);
+    setMyIssues(issuesRes.data);
+    // Fetch user's feedback
+    const feedbackRes = await axios.get("http://localhost:5000/api/feedback/my", config);
+    setMyFeedback(feedbackRes.data);
+  }
+  fetchActivity();
+}, []);
+ function handleLogout() {
+    localStorage.removeItem("token");
+    navigate("/login");
+  }
   return (
     <Layout>
       <div className="min-h-screen relative bg-zinc-950">
@@ -31,6 +53,12 @@ export default function Dashboard() {
         {/* Content */}
         <div className="px-6 py-8 relative z-10">
           <h1 className="text-4xl font-bold text-primary mb-4">Dashboard</h1>
+            <button
+              onClick={handleLogout}
+              className="bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:opacity-90 px-7 py-3 rounded-lg text-sm font-semibold text-white transition mt-2 mb-6"
+            >
+              Logout
+            </button>
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
             {/* Announcements Card */}
             <div className="bg-zinc-900/60 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
@@ -55,15 +83,34 @@ export default function Dashboard() {
             </div>
 
             {/* Your Activity Card */}
-            <div className="bg-zinc-900/60 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
-              <h2 className="text-xl font-semibold text-accent mb-2">
-                Your Activity
-              </h2>
-              <p className="text-gray-400">No recent actions.</p>
-            </div>
+           <div>
+    <div  className="text-xl font-semibold text-accent mb-2">Recent Issues:</div>
+    {myIssues.length === 0 ? (
+      <p className="text-gray-400">No issues submitted.</p>
+    ) : (
+      <ul>
+        {myIssues.slice(0, 2).map(issue => (
+          <li key={issue._id}>{issue.title}</li>
+        ))}
+      </ul>
+    )}
+    <div  className="text-xl font-semibold text-accent mb-2">Recent Feedback:</div>
+    {myFeedback.length === 0 ? (
+      <p className="text-gray-400">No feedback submitted.</p>
+    ) : (
+      <ul>
+        {myFeedback.slice(0, 2).map(fb => (
+          <li key={fb._id}>{fb.feedback}</li>
+        ))}
+      </ul>
+    )}
+  </div>
+</div>
+ 
           </div>
+         
         </div>
-      </div>
+      
     </Layout>
   );
 }

@@ -35,4 +35,12 @@ router.get("/", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Error fetching issues" });
   }
 });
+router.get("/my", verifyToken, async (req, res) => {
+  try {
+    const issues = await Issue.find({ usn: req.user.usn }).sort({ createdAt: -1 });
+    res.json(issues);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 module.exports = router;

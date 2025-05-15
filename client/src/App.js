@@ -6,6 +6,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Issue from "./pages/Issue";
 import Polls from "./pages/Polls";
+import Register from "./pages/Register";
 import Feedback from "./pages/Feedback";
 import Help from "./pages/HelpPage"; // Help Page
 import About from "./pages/About"; // About Page
@@ -25,6 +26,8 @@ function App() {
           <>
             <Route path="/help" element={<Help />} />
             <Route path="/about" element={<About />} />
+            <Route path="/register" element={<Register />} />
+
           </>
         )}
 

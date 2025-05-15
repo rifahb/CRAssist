@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
-
+import axios from "axios";
 export default function Register() {
   const [name, setName] = useState("");
   const [usn, setUsn] = useState("");
@@ -12,21 +12,25 @@ export default function Register() {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess(false);
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess(false);
 
-    if (!name || !usn || !dob || !email || !role) {
-      return setError("All fields are required.");
-    }
+  if (!name || !usn || !dob || !email || !role) {
+    return setError("All fields are required.");
+  }
 
-    // 🔐 Replace this with actual backend API call later
-    setTimeout(() => {
-      setSuccess(true);
-      setTimeout(() => navigate("/login"), 2000); // redirect after 2s
-    }, 1000);
-  };
+  try {
+    const res = await axios.post("http://localhost:5000/api/auth/register", {
+      name, usn, dob, email, role
+    });
+    setSuccess(true);
+    setTimeout(() => navigate("/login"), 2000); // redirect after 2s
+  } catch (err) {
+    setError(err.response?.data?.message || "Registration failed");
+  }
+};
 
   return (
     <Layout>
@@ -57,8 +61,8 @@ export default function Register() {
               onChange={(e) => setUsn(e.target.value)}
             />
             <input
-              type="date"
-              placeholder="Date of Birth"
+              type="text"
+              placeholder="Date of Birth(YYYY-MM-DD)"
               className="w-full px-4 py-2 rounded-lg bg-white/10 text-white border border-white/20 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
@@ -76,9 +80,8 @@ export default function Register() {
               className="w-full px-4 py-2 rounded-lg bg-white/10 text-white border border-white/20 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="" disabled>Select Role</option>
-              <option value="Student">Student</option>
-              <option value="Teacher">Teacher</option>
-              <option value="CR">CR</option>
+              <option value="student">Student</option>
+              <option value="cr">CR</option>
             </select>
 
             {error && <p className="text-red-400 text-sm">{error}</p>}

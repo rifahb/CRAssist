@@ -16,6 +16,7 @@ router.post("/", verifyToken, async (req, res) => {
     });
     res.status(201).json(poll);
   } catch (err) {
+     console.error(err); 
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -26,6 +27,7 @@ router.get("/", verifyToken, async (req, res) => {
     const polls = await Poll.find().sort({ createdAt: -1 });
     res.json(polls);
   } catch (err) {
+     console.error(err); 
     res.status(500).json({ message: "Server error" });
   }
 });

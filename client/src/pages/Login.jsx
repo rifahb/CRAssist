@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
+import { Link } from "react-router-dom";
+
 import { useAuth } from "../context/authContext"; // ✅ Import context
 import axios from "axios"; // Import axios
 export default function Login() {
@@ -90,9 +92,9 @@ export default function Login() {
               {loading ? "Logging in..." : "Login"}
             </button>
             <div className="flex justify-between text-xs mt-2 text-gray-300">
-              <a href="/forgot-password" className="hover:underline">Forgot password?</a>
-              <a href="/register" className="hover:underline">Create account</a>
-            </div>
+  <a href="/forgot-password" className="hover:underline">Forgot password?</a>
+  <Link to="/register" className="hover:underline">Create account</Link>
+</div>
           </form>
         </div>
       </div>

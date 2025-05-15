@@ -12,6 +12,7 @@ import Feedback from "./pages/Feedback";
 import Help from "./pages/HelpPage"; // Help Page
 import About from "./pages/About"; // About Page
 import ViewIssues from "./pages/ViewIssues";
+import ViewFeedback from "./pages/ViewFeedback";
 import { useAuth } from "./context/authContext";
 
 
@@ -52,6 +53,16 @@ function App() {
   element={
     user?.role === "cr" ? (
       <ViewIssues />
+    ) : (
+      <Navigate to="/profile" replace />
+    )
+  }
+/>
+<Route
+  path="/viewfeedback"
+  element={
+    user?.role === "cr" ? (
+      <ViewFeedback />
     ) : (
       <Navigate to="/profile" replace />
     )

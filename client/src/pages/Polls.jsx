@@ -1,42 +1,78 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
+import axios from "axios";
 
 export default function Polls() {
+  const [polls, setPolls] = useState([]);
+  const [selected, setSelected] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // Fetch polls
+  useEffect(() => {
+    const fetchPolls = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("/api/polls", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setPolls(res.data);
+      } catch (err) {
+        setError("Failed to load polls");
+      }
+    };
+    fetchPolls();
+  }, []);
+
+  // Vote handler
+  const handleVote = async (pollId, optionIndex) => {
+    setLoading(true);
+    setError("");
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `/api/polls/${pollId}/vote`,
+        { optionIndex },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setPolls(polls =>
+        polls.map(p => (p._id === pollId ? res.data : p))
+      );
+    } catch (err) {
+      setError(err.response?.data?.message || "Vote failed");
+    }
+    setLoading(false);
+  };
+
   return (
     <Layout>
-      <div className="min-h-screen relative bg-zinc-950">
-        {/* Background with subtle glassmorphism effect */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute -top-40 -left-32 w-[600px] h-[600px] bg-indigo-500/20 blur-3xl rounded-full opacity-30 animate-pulse"></div>
-          <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-purple-500/20 blur-3xl rounded-full opacity-25 animate-pulse"></div>
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-pink-500/20 blur-3xl rounded-full opacity-20 animate-pulse"></div>
-        </div>
-
-        {/* Content */}
-        <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center text-white relative z-10 px-6 py-8">
-          <h1 className="text-3xl font-bold text-primary mb-6">Vote in Polls</h1>
-          <form className="space-y-4 max-w-xl">
-            <fieldset className="bg-zinc-900/60 backdrop-blur-md p-6 rounded-xl border border-zinc-700">
-              <legend className="text-accent text-lg font-semibold">
-                Which feature do you want next?
-              </legend>
-              <div className="mt-3 space-y-2">
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="poll" className="accent-primary" /> Dark Mode
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="poll" className="accent-primary" /> Calendar View
-                </label>
-                <label className="flex items-center gap-2">
-                  <input type="radio" name="poll" className="accent-primary" /> Real-time Chat
-                </label>
-              </div>
-            </fieldset>
-            <button className="bg-primary hover:bg-purple-600 px-6 py-2 rounded-lg font-semibold">
-              Submit Vote
-            </button>
-          </form>
-        </div>
+      <div className="min-h-screen bg-zinc-950 text-white px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Polls</h1>
+        {error && <div className="text-red-400 mb-4">{error}</div>}
+        {polls.map(poll => (
+          <div key={poll._id} className="mb-8 p-6 bg-zinc-900 rounded-xl shadow">
+            <div className="font-semibold mb-2">{poll.question}</div>
+            <div>
+              {poll.options.map((opt, idx) => (
+                <div key={idx} className="flex items-center gap-2 mb-1">
+                  <button
+                    disabled={poll.voters.includes(JSON.parse(atob(localStorage.getItem("token").split('.')[1])).usn)}
+                    onClick={() => handleVote(poll._id, idx)}
+                    className="accent-primary"
+                  >
+                    {opt.text}
+                  </button>
+                  <span className="ml-2 text-xs text-gray-400">
+                    {opt.votes} votes
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="text-xs text-gray-500 mt-2">
+              Total votes: {poll.options.reduce((a, b) => a + b.votes, 0)}
+            </div>
+          </div>
+        ))}
       </div>
     </Layout>
   );

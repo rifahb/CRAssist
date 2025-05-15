@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const announcementRoutes = require("./routes/announcement");
+const issueRoutes = require("./routes/issue");
 const cors = require("cors");
 
 dotenv.config();
@@ -15,6 +16,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/announcements", announcementRoutes);
+
+app.use("/api/issues", issueRoutes);
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true

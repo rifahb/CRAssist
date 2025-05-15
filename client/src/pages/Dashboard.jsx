@@ -1,7 +1,23 @@
 import Layout from "../components/Layout";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import axios from "axios";
 export default function Dashboard() {
+    const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAnnouncements() {
+      try {
+        const res = await axios.get("http://localhost:5000/api/announcements");
+        setAnnouncements(res.data);
+      } catch {
+        setAnnouncements([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAnnouncements();
+  }, []);
   return (
     <Layout>
       <div className="min-h-screen relative bg-zinc-950">
@@ -21,7 +37,21 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-accent mb-2">
                 Announcements
               </h2>
-              <p className="text-gray-400">No announcements yet.</p>
+               {loading ? (
+                <p className="text-gray-400">Loading...</p>
+              ) : announcements.length === 0 ? (
+                <p className="text-gray-400">No announcements yet.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {announcements.map(a => (
+                    <li key={a._id} className="border-b border-zinc-700 pb-2">
+                      <div className="font-semibold">{a.title}</div>
+                      <div className="text-gray-300">{a.content}</div>
+                      <div className="text-xs text-gray-500">{new Date(a.createdAt).toLocaleString()}</div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             {/* Your Activity Card */}

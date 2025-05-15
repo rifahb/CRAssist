@@ -2,35 +2,47 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import { useAuth } from "../context/authContext"; // ✅ Import context
-
+import axios from "axios"; // Import axios
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+   const [usn, setUsn] = useState(""); // Change email to USN
+  const [dob, setDob] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth(); // ✅ Get login from context
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
-    if (!email || !password) {
+   if (!usn || !dob) {
       setError("Please fill in all fields.");
       setLoading(false);
       return;
     }
 
-    setTimeout(() => {
-      setLoading(false);
-      if (email === "test@example.com" && password === "password") {
-        login(email); // ✅ Set user in context
-        navigate("/profile"); // ✅ Go to profile
-      } else {
-        setError("Invalid email or password.");
+  try {
+      const response = await axios.post("http://localhost:5000/api/auth/login", {
+        usn,
+        dob, // Send usn and dob to the backend
+      });
+
+      if (response.data.token) {
+        // Store the JWT token in localStorage or sessionStorage
+        localStorage.setItem("token", response.data.token);
+
+        // Set user info in context
+        login(usn);
+
+        // Navigate to the profile or dashboard
+        navigate("/profile");
       }
-    }, 1200);
+    } catch (err) {
+      setLoading(false);
+      setError(err.response?.data?.message || "Something went wrong.");
+    }
   };
 
   return (
@@ -50,23 +62,23 @@ export default function Login() {
             <div>
               <label className="block mb-1 text-sm font-medium text-white" htmlFor="email">Email</label>
               <input
-                id="email"
-                type="email"
+                id="usn"
+                type="text"
                 className="w-full px-4 py-2 rounded-lg bg-white/10 text-white border border-white/20 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your USN"
+                value={usn}
+                onChange={(e) => setUsn(e.target.value)}
               />
             </div>
             <div>
               <label className="block mb-1 text-sm font-medium text-white" htmlFor="password">Password</label>
               <input
-                id="password"
-                type="password"
+                 id="dob"
+                type="text"
                 className="w-full px-4 py-2 rounded-lg bg-white/10 text-white border border-white/20 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your birthdate (YYYY-MM-DD)"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
               />
             </div>
             {error && <div className="text-red-400 text-sm">{error}</div>}

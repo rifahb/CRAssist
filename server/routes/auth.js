@@ -5,8 +5,8 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// POST /api/auth/login
 router.post("/login", async (req, res) => {
+
   let { usn, dob } = req.body;
   try {
     if (!usn || !dob) {
@@ -16,6 +16,7 @@ router.post("/login", async (req, res) => {
     dob = dob.trim();
 
     const user = await User.findOne({ usn, dob });
+
 
     if (!user) {
       return res.status(401).json({ message: "Invalid USN or DOB" });

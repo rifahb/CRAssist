@@ -88,6 +88,7 @@ export default function Settings() {
               type="text"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
+              placeholder="Date of Birth (YYYY-MM-DD)"
               className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white"
             />
 

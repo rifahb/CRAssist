@@ -3,6 +3,29 @@ const router = express.Router();
 const { protect } = require("./auth");
 const User = require("../models/User");
 
+
+router.put("/me", protect, async (req, res) => {
+  const { email, dob, language, darkMode } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.email = email || user.email;
+    user.dob = dob || user.dob;
+    user.language = language || user.language;
+    user.darkMode = darkMode !== undefined ? darkMode : user.darkMode;
+
+    await user.save();
+
+    res.json({ message: "Profile updated successfully." });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+
 router.delete("/me", protect, async (req, res) => {
   const { dob } = req.body;
 

@@ -24,7 +24,7 @@ export default function Issue() {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:5000/api/issues",
+        "http://localhost:5001/api/issues",
         { title, description },
         {
           headers: { Authorization: `Bearer ${token}` },

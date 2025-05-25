@@ -13,7 +13,7 @@ export default function Polls() {
     const fetchPolls = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/polls", {
+        const res = await axios.get("http://localhost:5001/api/polls", {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPolls(res.data);

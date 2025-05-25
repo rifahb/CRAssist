@@ -13,7 +13,7 @@ export default function Profile() {
   }, [user]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/announcements")
+    axios.get("http://localhost:5001/api/announcements")
       .then((response) => setAnnouncements(response.data))
       .catch((error) => console.error("Error fetching announcements:", error));
   }, []);

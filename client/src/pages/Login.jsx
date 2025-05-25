@@ -26,7 +26,7 @@ export default function Login() {
     }
 
   try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post("http://localhost:5001/api/auth/login", {
         usn,
         dob, // Send usn and dob to the backend
       });

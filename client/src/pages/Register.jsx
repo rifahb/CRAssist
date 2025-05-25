@@ -22,7 +22,7 @@ export default function Register() {
   }
 
   try {
-    const res = await axios.post("http://localhost:5000/api/auth/register", {
+    const res = await axios.post("http://localhost:5001/api/auth/register", {
       name, usn, dob, email, role
     });
     setSuccess(true);
@@ -82,6 +82,7 @@ export default function Register() {
               <option value="" disabled>Select Role</option>
               <option value="student">Student</option>
               <option value="cr">CR</option>
+              <option value="teacher">Teacher</option>
             </select>
 
             {error && <p className="text-red-400 text-sm">{error}</p>}

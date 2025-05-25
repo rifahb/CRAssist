@@ -9,7 +9,7 @@ export default function ViewIssues() {
     const fetchIssues = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/issues", {
+        const res = await axios.get("http://localhost:5001/api/issues", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setIssues(res.data);

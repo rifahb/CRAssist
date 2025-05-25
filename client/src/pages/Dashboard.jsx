@@ -15,31 +15,17 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    async function fetchAnnouncements() {
+      try {
+        const res = await axios.get("http://localhost:5000/api/announcements");
+        setAnnouncements(res.data);
+      } catch {
+        setAnnouncements([]);
+      } finally {
+        setLoading(false);
+      }
+    }
     fetchAnnouncements();
-  }, []);
-
-  async function fetchAnnouncements() {
-    setLoading(true);
-    try {
-      const res = await axios.get("http://localhost:5000/api/announcements");
-      setAnnouncements(res.data);
-    } catch {
-      setAnnouncements([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    async function fetchActivity() {
-      const token = localStorage.getItem("token");
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      const issuesRes = await axios.get("http://localhost:5000/api/issues/my", config);
-      setMyIssues(issuesRes.data);
-      const feedbackRes = await axios.get("http://localhost:5000/api/feedback/my", config);
-      setMyFeedback(feedbackRes.data);
-    }
-    fetchActivity();
   }, []);
 
   function handleLogout() {

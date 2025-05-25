@@ -22,7 +22,7 @@ export default function Feedback() {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:5000/api/feedback",
+        "http://localhost:5001/api/feedback",
         { feedback },
         { headers: { Authorization: `Bearer ${token}` } }
       );

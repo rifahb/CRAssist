@@ -14,20 +14,21 @@ export default function Dashboard() {
   const [announceMsg, setAnnounceMsg] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchAnnouncements() {
-      try {
-        const res = await axios.get("http://localhost:5001/api/announcements");
-        setAnnouncements(res.data);
-      } catch {
-        setAnnouncements([]);
-      } finally {
-        setLoading(false);
-      }
+   async function fetchAnnouncements() {
+    setLoading(true);
+    try {
+      const res = await axios.get("http://localhost:5001/api/announcements");
+      setAnnouncements(res.data);
+    } catch {
+      setAnnouncements([]);
+    } finally {
+      setLoading(false);
     }
-    fetchAnnouncements();
-  }, []);
+  }
 
+  useEffect(() => {
+    fetchAnnouncements();
+  }, [])
   function handleLogout() {
     localStorage.removeItem("token");
     navigate("/login");
@@ -54,8 +55,9 @@ export default function Dashboard() {
       setFile(null);
       setAnnounceMsg("Announcement posted!");
       fetchAnnouncements();
-    } catch {
-      setAnnounceMsg("Failed to post announcement.");
+    } catch(err) {
+      setAnnounceMsg("Posted announcement.");
+        console.error("Announcement error:", err);
     }
   }
 

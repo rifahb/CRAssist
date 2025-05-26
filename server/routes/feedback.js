@@ -32,8 +32,54 @@ router.get("/", verifyToken, async (req, res) => {
 });
 router.get("/my", verifyToken, async (req, res) => {
   try {
-    const feedbacks = await Feedback.find({ usn: req.user.usn }).sort({ createdAt: -1 });
+    // const feedbacks = await Feedback.find({ usn: req.user.user}).sort({ createdAt: -1 });
+    console.log("req.user.id", req.user.id);
+const feedbacks = await Feedback.find({ user: req.user.id }).sort({ createdAt: -1 });
+console.log("feedbacks", feedbacks);
     res.json(feedbacks);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+// Update feedback
+// Update feedback
+router.put("/:id", verifyToken, async (req, res) => {
+  try {
+    const feedback = await Feedback.findById(req.params.id);
+    if (!feedback) return res.status(404).json({ message: "Not found" });
+
+    // Only owner or CR/teacher can update
+    if (
+      feedback.user.toString() !== req.user.id &&
+      !["cr", "teacher"].includes(req.user.role)
+    ) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    feedback.feedback = req.body.feedback || feedback.feedback;
+    await feedback.save();
+    res.json(feedback);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Delete feedback
+router.delete("/:id", verifyToken, async (req, res) => {
+  try {
+    const feedback = await Feedback.findById(req.params.id);
+    if (!feedback) return res.status(404).json({ message: "Not found" });
+
+    // Only owner or CR/teacher can delete
+    if (
+      feedback.user.toString() !== req.user.id &&
+      !["cr", "teacher"].includes(req.user.role)
+    ) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    await feedback.deleteOne();
+    res.json({ message: "Deleted" });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }

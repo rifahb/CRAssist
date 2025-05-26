@@ -6,7 +6,8 @@ const Feedback = require("../models/Feedback");
 
 const router = express.Router();
 
-router.put("/me", protect, async (req, res) => {
+router.get("/me", protect, async (req, res) => {
+  console.log("PUT /me req.body:", req.body);
   const { email, dob, language, darkMode } = req.body;
 
   try {

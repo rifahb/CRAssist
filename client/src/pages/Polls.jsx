@@ -32,7 +32,7 @@ export default function Polls() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:5000/api/polls/${pollId}/vote`,
+        `http://localhost:5001/api/polls/${pollId}/vote`,
         { optionIndex },
         { headers: { Authorization: `Bearer ${token}` } }
       );

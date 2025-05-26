@@ -14,8 +14,8 @@ import About from "./pages/About"; // About Page
 import ViewIssues from "./pages/ViewIssues";
 import ViewFeedback from "./pages/ViewFeedback";
 import { useAuth } from "./context/authContext";
-
-
+import MyFeedback from "./pages/MyFeedback"; // My Feedback Page
+import MyIssues from "./pages/MyIssues"
 function App() {
   const { user } = useAuth();
 
@@ -58,7 +58,7 @@ function App() {
     )
   }
 />
-<Route
+ <Route
   path="/viewfeedback"
   element={
     user?.role === "cr" || user?.role === "teacher" ? (
@@ -67,7 +67,9 @@ function App() {
       <Navigate to="/profile" replace />
     )
   }
-/>
+/> <Route path="/myfeedback" element={<MyFeedback />} />
+          <Route path="/myissues" element={<MyIssues />} />
+{/* <Route path="/viewfeedback" element={<ViewFeedback />} /> */}
 
           </>
         )}

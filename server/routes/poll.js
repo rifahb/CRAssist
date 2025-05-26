@@ -33,23 +33,57 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // Vote in a poll
+// router.post("/:id/vote", verifyToken, async (req, res) => {
+//    if (req.user.role === "teacher") {
+//     return res.status(403).json({ message: "Teachers cannot vote in polls" });
+//   }
+
+//   const { optionIndex } = req.body;
+//   try {
+//     const poll = await Poll.findById(req.params.id);
+//     if (!poll) return res.status(404).json({ message: "Poll not found" });
+//     if (poll.voters.includes(req.user.usn)) return res.status(400).json({ message: "Already voted" });
+//     poll.options[optionIndex].votes += 1;
+//     poll.voters.push(req.user.usn);
+//     await poll.save();
+//     res.json(poll);
+//   } catch (err) {
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+const mongoose = require("mongoose"); // Add this at the top if not already
+
 router.post("/:id/vote", verifyToken, async (req, res) => {
-   if (req.user.role === "teacher") {
+  if (req.user.role === "teacher") {
     return res.status(403).json({ message: "Teachers cannot vote in polls" });
   }
 
   const { optionIndex } = req.body;
+  const pollId = req.params.id;
+
+  // Validate pollId
+  if (!mongoose.Types.ObjectId.isValid(pollId)) {
+    return res.status(400).json({ message: "Invalid poll ID" });
+  }
+
   try {
-    const poll = await Poll.findById(req.params.id);
+    const poll = await Poll.findById(pollId);
     if (!poll) return res.status(404).json({ message: "Poll not found" });
     if (poll.voters.includes(req.user.usn)) return res.status(400).json({ message: "Already voted" });
+    if (
+      typeof optionIndex !== "number" ||
+      optionIndex < 0 ||
+      optionIndex >= poll.options.length
+    ) {
+      return res.status(400).json({ message: "Invalid option" });
+    }
     poll.options[optionIndex].votes += 1;
     poll.voters.push(req.user.usn);
     await poll.save();
     res.json(poll);
   } catch (err) {
+    console.error("Vote error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
-
 module.exports = router;

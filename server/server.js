@@ -10,7 +10,7 @@ dotenv.config();
 const announcementRoutes = require("./routes/announcement");
 const issueRoutes = require("./routes/issue");
 const pollRoutes = require("./routes/poll");
-const userRoutes = require("./routes/user");
+const userRoutes = require("./routes/users");
 const feedbackRoutes = require("./routes/feedback");  // <--- Add this line
 const { router: authRoutes, protect } = require('./routes/auth');
 

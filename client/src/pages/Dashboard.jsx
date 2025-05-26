@@ -17,7 +17,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchAnnouncements() {
       try {
-        const res = await axios.get("http://localhost:5000/api/announcements");
+        const res = await axios.get("http://localhost:5001/api/announcements");
         setAnnouncements(res.data);
       } catch {
         setAnnouncements([]);
@@ -43,7 +43,7 @@ export default function Dashboard() {
     if (file) formData.append("file", file);
 
     try {
-      await axios.post("http://localhost:5000/api/announcements", formData, {
+      await axios.post("http://localhost:5001/api/announcements", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -129,7 +129,7 @@ export default function Dashboard() {
                       <div className="text-gray-300">{a.content}</div>
                       {a.fileUrl && (
                         <a
-                          href={`http://localhost:5000${a.fileUrl}`}
+                          href={`http://localhost:5001${a.fileUrl}`}
                           download
                           className="text-blue-400 underline"
                           target="_blank"

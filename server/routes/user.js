@@ -1,8 +1,10 @@
 const express = require("express");
-const router = express.Router();
 const { protect } = require("./auth");
 const User = require("../models/User");
+const Issue = require("../models/Issues");
+const Feedback = require("../models/Feedback");
 
+const router = express.Router();
 
 router.put("/me", protect, async (req, res) => {
   const { email, dob, language, darkMode } = req.body;
@@ -49,5 +51,29 @@ router.delete("/me", protect, async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+router.get("/me/data", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    const issues = await Issue.find({ usn: user.usn });
+    const feedback = await Feedback.find({ usn: user.usn });
+
+    res.json({
+      profile: {
+        name: user.name,
+        email: user.email,
+        usn: user.usn,
+        role: user.role
+      },
+      issues,
+      feedback
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to get data" });
+  }
+});
+
+
+
 
 module.exports = router;

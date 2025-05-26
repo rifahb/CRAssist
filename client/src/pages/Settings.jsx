@@ -32,6 +32,27 @@ export default function Settings() {
     fetchProfile();
   }, []);
 
+  const handleDownloadData = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:5001/api/users/me/data", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "my-data.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (err) {
+    console.error("Failed to download data", err);
+    alert("Could not download your data.");
+  }
+};
+
+
   const handleSave = async () => {
     setLoading(true);
     try {
@@ -102,6 +123,14 @@ export default function Settings() {
               />
             </div>
 
+            <button
+  onClick={handleDownloadData}
+  className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded text-white font-semibold transition"
+>
+  Download My Data
+</button>
+
+
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
@@ -112,6 +141,9 @@ export default function Settings() {
               <option>Kannada</option>
             </select>
           </div>
+
+
+          
 
           <div className="flex justify-between items-center mt-6">
             <button

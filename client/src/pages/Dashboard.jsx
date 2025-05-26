@@ -152,7 +152,8 @@ export default function Dashboard() {
                           Download Attachment
                         </a>
                       )}
-                      <div className="text-xs text-gray-500">{new Date(a.createdAt).toLocaleString()}</div>
+                      {/* Use a.date instead of a.createdAt */}
+                      <div className="text-xs text-gray-500">{a.date ? new Date(a.date).toLocaleString() : ""}</div>
                     </li>
                   ))}
                 </ul>

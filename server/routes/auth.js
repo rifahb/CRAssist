@@ -54,7 +54,7 @@ const protect = (req, res, next) => {
 };
 
 const checkCRRole = (req, res, next) => {
-  if (req.user.role !== "cr") {
+  if (req.user.role !== "cr" && req.user.role!=="teacher") {
     return res.status(403).json({ message: "Access denied: Only CRs can post announcements" });
   }
   next();

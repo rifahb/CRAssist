@@ -18,8 +18,16 @@ router.post("/", verifyToken, async (req, res) => {
 
 // Get all feedbacks (CR only)
 router.get("/", verifyToken, async (req, res) => {
-  if (req.user.role !== "cr") return res.status(403).json({ message: "Forbidden" });
+  if (req.user.role !== "cr"&& req.user.role !="teacher") return res.status(403).json({ message: "Forbidden" });
   const feedbacks = await Feedback.find().populate("user", "name usn email");
+  if (req.user.role === "teacher") {
+    const anonymousFeedbacks = feedbacks.map(fb => ({
+      _id: fb._id,
+      feedback: fb.feedback,
+      createdAt: fb.createdAt,
+    }));
+    return res.json(anonymousFeedbacks);
+  }
   res.json(feedbacks);
 });
 router.get("/my", verifyToken, async (req, res) => {

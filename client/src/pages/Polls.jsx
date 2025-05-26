@@ -75,7 +75,7 @@ export default function Polls() {
       <div className="min-h-screen bg-zinc-950 text-white px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Polls</h1>
         {/* Show Create Poll button only for CRs */}
-        {getRoleFromToken() === "cr" && (
+        {(getRoleFromToken() === "cr"|| getRoleFromToken() === "teacher") && (
           <Link to="/polls/create" className="bg-indigo-600 px-4 py-2 rounded font-semibold mb-4 inline-block">
             Create Poll
           </Link>

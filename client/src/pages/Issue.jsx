@@ -8,7 +8,7 @@ export default function Issue() {
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  
+
   function getRoleFromToken() {
     try {
       const token = localStorage.getItem("token");
@@ -19,6 +19,8 @@ export default function Issue() {
       return null;
     }
   }
+  const role = getRoleFromToken();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -51,7 +53,7 @@ export default function Issue() {
         {/* Form */}
         <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center text-white relative z-10 px-6 py-8">
           <h1 className="text-3xl font-bold text-primary mb-6">Report an Issue</h1>
-           {getRoleFromToken() === "cr" && (
+          {(role === "cr" || role === "teacher") && (
             <button
               className="mb-4 bg-indigo-600 px-4 py-2 rounded font-semibold text-white hover:bg-indigo-700 transition"
               onClick={() => navigate("/viewissues")}
@@ -59,26 +61,29 @@ export default function Issue() {
               View Issues
             </button>
           )}
-          <form className="space-y-4 max-w-xl w-full" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Issue title"
-              className="w-full px-4 py-2 rounded-lg bg-zinc-800/60 backdrop-blur-md border border-zinc-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-primary"
-            />
-            <textarea
-              rows="5"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your issue..."
-              className="w-full px-4 py-3 rounded-lg bg-zinc-800/60 backdrop-blur-md border border-zinc-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-primary"
-            ></textarea>
-            <button className="bg-primary hover:bg-purple-600 px-6 py-2 rounded-lg font-semibold">
-              Submit Issue
-            </button>
-            {message && <p className="text-sm text-green-400 mt-2">{message}</p>}
-          </form>
+          {/* Only show issue form if NOT teacher */}
+          {role !== "teacher" && (
+            <form className="space-y-4 max-w-xl w-full" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Issue title"
+                className="w-full px-4 py-2 rounded-lg bg-zinc-800/60 backdrop-blur-md border border-zinc-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-primary"
+              />
+              <textarea
+                rows="5"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe your issue..."
+                className="w-full px-4 py-3 rounded-lg bg-zinc-800/60 backdrop-blur-md border border-zinc-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-primary"
+              ></textarea>
+              <button className="bg-primary hover:bg-purple-600 px-6 py-2 rounded-lg font-semibold">
+                Submit Issue
+              </button>
+              {message && <p className="text-sm text-green-400 mt-2">{message}</p>}
+            </form>
+          )}
         </div>
       </div>
     </Layout>

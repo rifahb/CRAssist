@@ -19,7 +19,7 @@ const upload = multer({ storage });
 // Get all announcements (no auth required)
 router.get('/', async (req, res) => {
   try {
-    const announcements = await Announcement.find();
+    const announcements = await Announcement.find().sort({ date: -1 });
     res.json(announcements);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching announcements' });

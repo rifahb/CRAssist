@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Only CR can create a poll
 router.post("/", verifyToken, async (req, res) => {
-  if (req.user.role !== "cr") return res.status(403).json({ message: "Only CR can create polls" });
+  if (req.user.role !== "cr"&&  req.user.role !== "teacher") return res.status(403).json({ message: "Only CR can create polls" });
   const { question, options } = req.body;
   if (!question || !options || options.length < 2) return res.status(400).json({ message: "Invalid poll data" });
   try {
@@ -34,6 +34,10 @@ router.get("/", verifyToken, async (req, res) => {
 
 // Vote in a poll
 router.post("/:id/vote", verifyToken, async (req, res) => {
+   if (req.user.role === "teacher") {
+    return res.status(403).json({ message: "Teachers cannot vote in polls" });
+  }
+
   const { optionIndex } = req.body;
   try {
     const poll = await Poll.findById(req.params.id);

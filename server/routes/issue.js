@@ -24,16 +24,16 @@ router.post("/", verifyToken, async (req, res) => {
 
 // GET - CR views all issues
 router.get("/", verifyToken, async (req, res) => {
-  if (req.user.role !== "cr") {
+  if (req.user.role !== "cr" && req.user.role !== "teacher") {
     return res.status(403).json({ message: "Access denied" });
   }
 
-  try {
+  
     const issues = await Issue.find().sort({ date: -1 });
+   
+    
     res.json(issues);
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching issues" });
-  }
+
 });
 router.get("/my", verifyToken, async (req, res) => {
   try {

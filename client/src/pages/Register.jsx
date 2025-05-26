@@ -82,6 +82,7 @@ export default function Register() {
               <option value="" disabled>Select Role</option>
               <option value="student">Student</option>
               <option value="cr">CR</option>
+               <option value="teacher">Teacher</option>
             </select>
 
             {error && <p className="text-red-400 text-sm">{error}</p>}

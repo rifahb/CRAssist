@@ -51,7 +51,7 @@ function App() {
             <Route
   path="/viewissues"
   element={
-    user?.role === "cr" ? (
+    user?.role === "cr" || user?.role === "teacher" ? (
       <ViewIssues />
     ) : (
       <Navigate to="/profile" replace />
@@ -61,7 +61,7 @@ function App() {
 <Route
   path="/viewfeedback"
   element={
-    user?.role === "cr" ? (
+    user?.role === "cr" || user?.role === "teacher" ? (
       <ViewFeedback />
     ) : (
       <Navigate to="/profile" replace />

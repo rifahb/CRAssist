@@ -59,6 +59,33 @@ export default function Dashboard() {
     }
   }
 
+  useEffect(() => {
+  async function fetchUserData() {
+    try {
+      const res = await axios.get("http://localhost:5001/api/users/me/data", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("User data from API:", res.data);
+      const sortedIssues = res.data.issues
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 2);
+      const sortedFeedback = res.data.feedback
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 2);
+
+      setMyIssues(sortedIssues);
+      setMyFeedback(sortedFeedback);
+    } catch (err) {
+      console.error("Failed to fetch user data:", err);
+      setMyIssues([]);
+      setMyFeedback([]);
+    }
+  }
+  fetchUserData();
+}, []);
+
   return (
     <Layout>
       <div className="min-h-screen relative bg-zinc-950">
@@ -152,7 +179,7 @@ export default function Dashboard() {
                 <p className="text-gray-400">No issues submitted.</p>
               ) : (
                 <ul>
-                  {myIssues.slice(0, 2).map(issue => (
+                  {myIssues.map(issue => (
                     <li key={issue._id}>{issue.title}</li>
                   ))}
                 </ul>
@@ -162,7 +189,7 @@ export default function Dashboard() {
                 <p className="text-gray-400">No feedback submitted.</p>
               ) : (
                 <ul>
-                  {myFeedback.slice(0, 2).map(fb => (
+                  {myFeedback.map(fb => (
                     <li key={fb._id}>{fb.feedback}</li>
                   ))}
                 </ul>

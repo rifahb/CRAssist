@@ -5,7 +5,9 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   usn: { type: String, unique: true },
   dob: String, // store as YYYY-MM-DD
-  role: { type: String, enum: ["student", "cr"], default: "student" }
+  role: { type: String, enum: ["student", "cr"], default: "student" },
+  language: { type: String, default: "English" },         // 🔹 Add this line
+  darkMode: { type: Boolean, default: true },  
 });
 
 module.exports = mongoose.model("User", userSchema);

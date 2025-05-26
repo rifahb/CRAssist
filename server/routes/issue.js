@@ -28,12 +28,8 @@ router.get("/", verifyToken, async (req, res) => {
     return res.status(403).json({ message: "Access denied" });
   }
 
-  
-    const issues = await Issue.find().sort({ date: -1 });
-   
-    
-    res.json(issues);
-
+  const issues = await Issue.find().sort({ date: -1 });
+  res.json(issues);
 });
 router.get("/my", verifyToken, async (req, res) => {
   try {

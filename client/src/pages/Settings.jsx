@@ -1,130 +1,168 @@
 // src/pages/Settings.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
+import { useAuth } from "../context/authContext";
+import axios from "axios";
 
 export default function Settings() {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("user@example.com");
-  const [dob, setDob] = useState("01/01/1990");
+  const [email, setEmail] = useState("");
+  const [dob, setDob] = useState("");
   const [darkMode, setDarkMode] = useState(true);
   const [language, setLanguage] = useState("English");
   const [message, setMessage] = useState("");
-  const [accountDeleted, setAccountDeleted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleDeleteAccount = () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete your account? This cannot be undone."
-    );
-    if (!confirmDelete) return;
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5001/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setEmail(res.data.email);
+        setDob(res.data.dob);
+      } catch (err) {
+        console.error("Error fetching user data", err);
+      }
+    };
+    fetchProfile();
+  }, []);
 
-    if (dob === "01/01/1990") {
-      setAccountDeleted(true);
-      setMessage("Your account has been deleted.");
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } else {
-      setMessage("Please enter correct DOB to confirm deletion.");
+  const handleDownloadData = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:5001/api/users/me/data", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "my-data.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (err) {
+    console.error("Failed to download data", err);
+    alert("Could not download your data.");
+  }
+};
+
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        "http://localhost:5001/api/users/me",
+        { email, dob, language, darkMode },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setMessage("✅ Saved successfully!");
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Failed to save.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSave = () => {
-    setMessage("Your preferences have been saved.");
+  const handleDeleteAccount = async () => {
+    const confirmDob = prompt("Please enter your DOB (YYYY-MM-DD) to confirm:");
+    if (!confirmDob) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete("http://localhost:5001/api/users/me", {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { dob: confirmDob },
+      });
+      alert("✅ Account deleted.");
+      logout();
+      navigate("/login");
+    } catch (err) {
+      alert(err.response?.data?.message || "❌ Error deleting account.");
+    }
   };
 
   return (
     <Layout>
-      <div className="min-h-[calc(100vh-64px)] bg-gray-950 text-white px-6 py-10 relative">
-        <div className="max-w-3xl mx-auto bg-white/5 backdrop-blur border border-white/10 rounded-2xl shadow-xl p-8 space-y-8">
-          <h1 className="text-3xl font-bold text-primary">User Settings</h1>
+      <div className="min-h-[calc(100vh-64px)] bg-gray-950 px-6 py-10 text-white">
+        <div className="max-w-xl mx-auto bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-6 space-y-6">
 
-          {/* Account Info */}
-          <section className="space-y-4">
-            <h2 className="text-xl font-semibold text-accent">Account Information</h2>
-            <label className="block">
-              <span className="text-gray-300">Email</span>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full bg-zinc-800 text-white border border-zinc-700 rounded px-3 py-2"
-              />
-            </label>
+          <h1 className="text-2xl font-bold text-primary text-center">Settings</h1>
 
-            <label className="block">
-              <span className="text-gray-300">Date of Birth</span>
-              <input
-                type="date"
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                min="1900-01-01"
-                max="2025-12-31"
-                className="mt-1 w-full bg-zinc-800 text-white border border-zinc-700 rounded px-3 py-2"
-              />
-            </label>
-          </section>
+          <div className="space-y-4">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white"
+            />
 
-          {/* Preferences */}
-          <section className="space-y-4">
-            <h2 className="text-xl font-semibold text-accent">Preferences</h2>
-            <label className="flex justify-between items-center">
-              <span className="text-gray-300">Enable Dark Mode</span>
+            <input
+              type="text"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              placeholder="Date of Birth (YYYY-MM-DD)"
+              className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white"
+            />
+
+            <div className="flex justify-between items-center">
+              <span>Dark Mode</span>
               <input
                 type="checkbox"
                 checked={darkMode}
                 onChange={() => setDarkMode(!darkMode)}
                 className="form-checkbox h-5 w-5 text-purple-600"
               />
-            </label>
+            </div>
 
-            <label className="flex justify-between items-center">
-              <span className="text-gray-300">Language</span>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="bg-zinc-800 text-white border border-zinc-700 rounded px-3 py-2"
-              >
-                <option>English</option>
-                <option>Spanish</option>
-                <option>French</option>
-                <option>German</option>
-              </select>
-            </label>
-          </section>
+            <button
+  onClick={handleDownloadData}
+  className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded text-white font-semibold transition"
+>
+  Download My Data
+</button>
 
-          {/* Delete Account */}
-          <section className="space-y-4 mt-8">
-            <h2 className="text-xl font-semibold text-red-600">Delete Account</h2>
-            <p className="text-gray-400 text-sm">
-              For mock deletion, DOB must be <code>1990-01-01</code>. This simulates a deletion flow.
-            </p>
+
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white"
+            >
+              <option>English</option>
+              <option>Hindi</option>
+              <option>Kannada</option>
+            </select>
+          </div>
+
+
+          
+
+          <div className="flex justify-between items-center mt-6">
             <button
               onClick={handleDeleteAccount}
-              className="bg-red-600 hover:bg-red-700 px-5 py-2 rounded text-white font-semibold transition"
-              disabled={accountDeleted}
+              className="text-red-500 hover:underline text-sm"
             >
-              {accountDeleted ? "Account Deleted" : "Delete My Account"}
+              Delete Account
             </button>
-          </section>
 
-          {/* Save Settings */}
-          <div className="flex justify-end">
             <button
               onClick={handleSave}
-              className="bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 px-6 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition"
+              disabled={loading}
+              className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-white text-sm font-semibold"
             >
-              Save Changes
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
 
-          {/* Feedback Message */}
-          {message && (
-            <div className="mt-4 text-center text-green-400 font-medium">
-              {message}
-            </div>
-          )}
+          {message && <p className="text-center text-sm text-green-400">{message}</p>}
         </div>
       </div>
     </Layout>

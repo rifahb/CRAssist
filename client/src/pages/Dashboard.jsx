@@ -15,31 +15,17 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    async function fetchAnnouncements() {
+      try {
+        const res = await axios.get("http://localhost:5001/api/announcements");
+        setAnnouncements(res.data);
+      } catch {
+        setAnnouncements([]);
+      } finally {
+        setLoading(false);
+      }
+    }
     fetchAnnouncements();
-  }, []);
-
-  async function fetchAnnouncements() {
-    setLoading(true);
-    try {
-      const res = await axios.get("http://localhost:5000/api/announcements");
-      setAnnouncements(res.data);
-    } catch {
-      setAnnouncements([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    async function fetchActivity() {
-      const token = localStorage.getItem("token");
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-      const issuesRes = await axios.get("http://localhost:5000/api/issues/my", config);
-      setMyIssues(issuesRes.data);
-      const feedbackRes = await axios.get("http://localhost:5000/api/feedback/my", config);
-      setMyFeedback(feedbackRes.data);
-    }
-    fetchActivity();
   }, []);
 
   function handleLogout() {
@@ -57,7 +43,7 @@ export default function Dashboard() {
     if (file) formData.append("file", file);
 
     try {
-      await axios.post("http://localhost:5000/api/announcements", formData, {
+      await axios.post("http://localhost:5001/api/announcements", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -72,6 +58,33 @@ export default function Dashboard() {
       setAnnounceMsg("Failed to post announcement.");
     }
   }
+
+  useEffect(() => {
+  async function fetchUserData() {
+    try {
+      const res = await axios.get("http://localhost:5001/api/users/me/data", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("User data from API:", res.data);
+      const sortedIssues = res.data.issues
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 2);
+      const sortedFeedback = res.data.feedback
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 2);
+
+      setMyIssues(sortedIssues);
+      setMyFeedback(sortedFeedback);
+    } catch (err) {
+      console.error("Failed to fetch user data:", err);
+      setMyIssues([]);
+      setMyFeedback([]);
+    }
+  }
+  fetchUserData();
+}, []);
 
   return (
     <Layout>
@@ -143,7 +156,7 @@ export default function Dashboard() {
                       <div className="text-gray-300">{a.content}</div>
                       {a.fileUrl && (
                         <a
-                          href={`http://localhost:5000${a.fileUrl}`}
+                          href={`http://localhost:5001${a.fileUrl}`}
                           download
                           className="text-blue-400 underline"
                           target="_blank"
@@ -167,7 +180,7 @@ export default function Dashboard() {
                 <p className="text-gray-400">No issues submitted.</p>
               ) : (
                 <ul>
-                  {myIssues.slice(0, 2).map(issue => (
+                  {myIssues.map(issue => (
                     <li key={issue._id}>{issue.title}</li>
                   ))}
                 </ul>
@@ -177,7 +190,7 @@ export default function Dashboard() {
                 <p className="text-gray-400">No feedback submitted.</p>
               ) : (
                 <ul>
-                  {myFeedback.slice(0, 2).map(fb => (
+                  {myFeedback.map(fb => (
                     <li key={fb._id}>{fb.feedback}</li>
                   ))}
                 </ul>

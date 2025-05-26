@@ -5,23 +5,31 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// POST /api/auth/login
 router.post("/login", async (req, res) => {
-  const { usn, dob } = req.body;
- try {
-  const user = await User.findOne({ usn, dob });
-  if (!user) {
-    return res.status(401).json({ message: "Invalid USN or DOB" });
-  }
 
-  const token = jwt.sign(
-    { id: user._id, usn: user.usn, role: user.role , name: user.name, email: user.email},
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+  let { usn, dob } = req.body;
+  try {
+    if (!usn || !dob) {
+      return res.status(400).json({ message: "USN and DOB required" });
+    }
+    usn = usn.trim();
+    dob = dob.trim();
 
-  res.json({ token });
-   } catch (err) {
+    const user = await User.findOne({ usn, dob });
+
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid USN or DOB" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, usn: user.usn, role: user.role , name: user.name, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({ token });
+  } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
@@ -52,6 +60,8 @@ const protect = (req, res, next) => {
     res.status(401).json({ message: "Not authorized" });
   }
 };
+
+
 
 const checkCRRole = (req, res, next) => {
   if (req.user.role !== "cr" && req.user.role!=="teacher") {

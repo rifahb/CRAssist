@@ -19,7 +19,7 @@ const upload = multer({ storage });
 // Get all announcements (no auth required)
 router.get('/', async (req, res) => {
   try {
-    const announcements = await Announcement.find().sort({ date: -1 });
+    const announcements = await Announcement.find().sort({ date: -1 }).populate("user", "_id role name");
     res.json(announcements);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching announcements' });
@@ -36,7 +36,7 @@ router.post(
     try {
       const { title, content } = req.body;
       const fileUrl = req.file ? `/uploads/${req.file.filename}` : null;
-      const announcement = new Announcement({ title, content, fileUrl });
+      const announcement = new Announcement({ title, content, fileUrl, user: req.user.id  });
       await announcement.save();
       res.status(201).json(announcement);
     } catch (err) {
@@ -45,5 +45,48 @@ router.post(
     }
   }
 );
+// Update announcement
+router.put("/:id", protect, async (req, res) => {
+  try {
+    const announcement = await Announcement.findById(req.params.id);
+    if (!announcement) return res.status(404).json({ message: "Not found" });
+
+    // Only CR or owner can update
+    if (
+      req.user.role !== "cr" &&
+      (!announcement.user || announcement.user.toString() !== req.user.id)
+    ) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    announcement.title = req.body.title || announcement.title;
+    announcement.content = req.body.content || announcement.content;
+    await announcement.save();
+    res.json(announcement);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Delete announcement
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const announcement = await Announcement.findById(req.params.id);
+    if (!announcement) return res.status(404).json({ message: "Not found" });
+
+    // Only CR or owner can delete
+    if (
+      req.user.role !== "cr" &&
+      (!announcement.user || announcement.user.toString() !== req.user.id)
+    ) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    await announcement.deleteOne();
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

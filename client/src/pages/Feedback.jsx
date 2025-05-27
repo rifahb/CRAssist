@@ -53,13 +53,14 @@ export default function Feedback() {
           <h1 className="text-3xl font-bold text-primary mb-6">Submit Feedback</h1>
           
           {/* View My Feedback button for everyone */}
+            {(role !=="teacher") && (
           <button
             className="mb-4 bg-indigo-600 px-4 py-2 rounded font-semibold text-white hover:bg-indigo-700 transition"
             onClick={() => navigate("/myfeedback")}
           >
             View My Feedback
           </button>
-
+          )}
           {/* View All Feedbacks button for CR/Teacher */}
           {(role === "cr" || role === "teacher") && (
             <button

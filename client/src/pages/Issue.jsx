@@ -53,12 +53,14 @@ export default function Issue() {
         {/* Form */}
         <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center text-white relative z-10 px-6 py-8">
           <h1 className="text-3xl font-bold text-primary mb-6">Report an Issue</h1>
+           {(role !=="teacher") && (
            <button
             className="mb-4 bg-indigo-600 px-4 py-2 rounded font-semibold text-white hover:bg-indigo-700 transition"
             onClick={() => navigate("/myissues")}
           >
             View My Issues
           </button>
+            )}
           {(role === "cr" || role === "teacher") && (
             <button
               className="mb-4 bg-indigo-600 px-4 py-2 rounded font-semibold text-white hover:bg-indigo-700 transition"

@@ -39,4 +39,48 @@ router.get("/my", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+// Update issue
+router.put("/:id", verifyToken, async (req, res) => {
+  try {
+    const issue = await Issue.findById(req.params.id);
+    if (!issue) return res.status(404).json({ message: "Not found" });
+
+    // Only owner or CR/teacher can update
+    if (
+      issue.usn !== req.user.usn &&
+      !["cr", "teacher"].includes(req.user.role)
+    ) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    issue.title = req.body.title || issue.title;
+    issue.description = req.body.description || issue.description;
+    issue.status = req.body.status || issue.status;
+    await issue.save();
+    res.json(issue);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Delete issue
+router.delete("/:id", verifyToken, async (req, res) => {
+  try {
+    const issue = await Issue.findById(req.params.id);
+    if (!issue) return res.status(404).json({ message: "Not found" });
+
+    // Only owner or CR/teacher can delete
+    if (
+      issue.usn !== req.user.usn &&
+      !["cr", "teacher"].includes(req.user.role)
+    ) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    await issue.deleteOne();
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 module.exports = router;

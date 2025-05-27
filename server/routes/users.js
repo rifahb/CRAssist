@@ -6,8 +6,7 @@ const Feedback = require("../models/Feedback");
 
 const router = express.Router();
 
-router.get("/me", protect, async (req, res) => {
-  console.log("PUT /me req.body:", req.body);
+router.put("/me", protect, async (req, res) => {
   const { email, dob, language, darkMode } = req.body;
 
   try {
@@ -77,4 +76,4 @@ router.get("/me/data", protect, async (req, res) => {
 
 
 
-module.exports = router;
+module.exports = router;

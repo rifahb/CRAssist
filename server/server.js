@@ -31,8 +31,7 @@ app.use("/api/issues", issueRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/uploads", express.static("uploads"));
 
-
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {

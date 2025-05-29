@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI/CD with SonarQube
 
 on:
   push:
@@ -47,18 +47,6 @@ jobs:
         working-directory: ./client
         run: npm run build
 
-      # Optional: Build Docker images (uncomment if you want)
-      # - name: Build Docker images
-      #   run: docker compose build
-name: SonarQube Scan
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
   sonar:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
@@ -70,7 +58,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17'  # required by Sonar
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Cache SonarQube packages
@@ -81,10 +69,12 @@ jobs:
 
       - name: Run SonarQube Scanner
         env:
-          SONAR_TOKEN: squ_d9016b5fd37005a7b6315ef965215328d91a193d
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
           unzip sonar-scanner.zip
           ./sonar-scanner-*/bin/sonar-scanner \
-            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.projectKey=your_project_key \
+            -Dsonar.sources=. \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.host.url=http://localhost:9000

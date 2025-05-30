@@ -1,6 +1,6 @@
 CRAssist – Class Representative Assistance System
 
-🚀 Project Overview
+🚀 Project Overview:
 
 CRAssist is a role-based web application integrated with the college's student information system, designed to streamline communication, task coordination, feedback collection, and notifications among students, teachers, and administrators. The system automates class representative duties to enhance classroom efficiency and engagement, providing a seamless experience for all users involved.
 

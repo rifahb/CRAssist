@@ -1,0 +1,34 @@
+name: Security Scan with Trivy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install wget -y
+          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.45.0_Linux-64bit.deb
+          sudo dpkg -i trivy_0.45.0_Linux-64bit.deb
+
+      - name: Scan Docker image
+        run: |
+          docker build -t myapp:latest .
+          trivy image --exit-code 1 --severity HIGH,CRITICAL myapp:latest
+
+      - name: Scan Terraform configs
+        run: |
+          trivy config ./terraform --exit-code 1 --severity HIGH,CRITICAL
+
+      - name: Scan for hardcoded secrets
+        run: |
+          trivy fs . --scanners secret --exit-code 1

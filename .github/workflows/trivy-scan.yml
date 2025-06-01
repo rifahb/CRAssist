@@ -1,3 +1,12 @@
+name: Trivy Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest

@@ -25,7 +25,7 @@ jobs:
 
       - name: Scan Terraform Configs
         run: |
-          trivy config ./terraform --exit-code 1 --severity CRITICAL
+          trivy config ./. --exit-code 1 --severity HIGH,CRITICAL
 
       - name: Scan for Secrets
         run: |

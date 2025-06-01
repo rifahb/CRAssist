@@ -1,6 +1,5 @@
-# main.tf
-resource "null_resource" "vagrant_up" {
+resource "null_resource" "run_ansible" {
   provisioner "local-exec" {
-    command = "vagrant up"
+    command = "ansible-playbook playbook.yml -i inventory.ini"
   }
 }

@@ -53,7 +53,7 @@
 #     needs: build-and-test
 
 #     steps:
-#       - name: Checkout code
+#  i     - name: Checkout code
 #         uses: actions/checkout@v4
 
 #       - name: SonarCloud Scan

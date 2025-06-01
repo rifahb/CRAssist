@@ -20,7 +20,7 @@ jobs:
 
       - name: Scan Docker Image
         run: |
-          docker build -t myapp:latest .
+          docker build -t myapp:latest ././client
           trivy image --exit-code 1 --severity HIGH,CRITICAL myapp:latest
 
       - name: Scan Terraform Configs

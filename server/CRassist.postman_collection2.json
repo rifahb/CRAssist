@@ -41,6 +41,14 @@
 									"        jsonData = {};\r",
 									"    }\r",
 									"    pm.expect(jsonData).to.have.property(\"token\");\r",
+									"\r",
+									"    // ✅ Store token in collection variable\r",
+									"    if (jsonData.token) {\r",
+									"        pm.collectionVariables.set(\"authToken\", jsonData.token);\r",
+									"        console.log(\"authToken set successfully:\", jsonData.token);\r",
+									"    } else {\r",
+									"        console.warn(\"No token found to set.\");\r",
+									"    }\r",
 									"});\r",
 									""
 								],
@@ -51,7 +59,14 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
@@ -87,7 +102,7 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "register",
 					"event": [
 						{
 							"listen": "test",
@@ -131,11 +146,21 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \" Doe\",\r\n  \"email\": \"doe@gmail.com\",\r\n  \"usn\": \"22CS002\",\r\n  \"dob\": \"2003-04-15\",\r\n  \"role\": \"student\"\r\n}\r\n",
+							"raw": "{\r\n  \"name\": \" Doe\",\r\n  \"email\": \"doem200@gmail.com\",\r\n  \"usn\": \"22CS8194\",\r\n  \"dob\": \"2004-03-26\",\r\n  \"role\": \"cr\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -187,19 +212,26 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"_id\": \"6835c9627cb614ed5a5d2086\",\n        \"title\": \"Quiz\",\n        \"content\": \"PPt \",\n        \"fileUrl\": \"/uploads/1748355426103.pdf\",\n        \"user\": {\n            \"_id\": \"6835c6737cb614ed5a5d207d\",\n            \"name\": \"Rifah\",\n            \"role\": \"cr\"\n        },\n        \"date\": \"2025-05-27T14:17:06.146Z\",\n        \"__v\": 0\n    }",
+							"raw": "{\n    \"title\": \"Midterm Exam Schedule\",\n    \"content\": \"The midterm exams will be held from June 10 to June 15. Please check the schedule on the portal.\",\n    \"fileUrl\": \"/uploads/exam_schedule.pdf\",\n    \"user\": {\n        \"_id\": \"6835c6737cb614ed5a5d2090\",\n        \"name\": \"Alex\",\n        \"role\": \"cr\"\n    },\n    \"date\": \"2025-06-05T10:00:00.000Z\",\n    \"__v\": 0\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -242,13 +274,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
@@ -262,7 +301,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5001/api/feedback/6835ca027cb614ed5a5d20b8",
+							"raw": "http://localhost:5001/api/feedback/6835f31b7cb614ed5a5d2174",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -271,7 +310,7 @@
 							"path": [
 								"api",
 								"feedback",
-								"6835ca027cb614ed5a5d20b8"
+								"6835f31b7cb614ed5a5d2174"
 							]
 						}
 					},
@@ -323,11 +362,21 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							},
 							{
@@ -388,13 +437,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
@@ -459,13 +515,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
@@ -521,13 +584,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
@@ -580,13 +650,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							},
 							{
@@ -643,13 +720,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
@@ -704,19 +788,26 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"dob\": \"2000-09-09\"\n}\n",
+							"raw": "{\n  \"dob\": \"2004-03-26\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -777,13 +868,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							},
 							{
@@ -838,13 +936,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
@@ -858,7 +963,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5001/api/issues/6835c9a17cb614ed5a5d208e",
+							"raw": "http://localhost:5001/api/issues/6835cfde7cb614ed5a5d20c5",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -867,7 +972,7 @@
 							"path": [
 								"api",
 								"issues",
-								"6835c9a17cb614ed5a5d208e"
+								"6835cfde7cb614ed5a5d20c5"
 							]
 						}
 					},
@@ -899,13 +1004,20 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MzVkOWU0N2NiNjE0ZWQ1YTVkMjBlOSIsInVzbiI6IjIyQ1MxMzEiLCJyb2xlIjoiY3IiLCJuYW1lIjoiU2VsaW5lIiwiZW1haWwiOiJjZWxpbmVAZ21haWwuY29tIiwiaWF0IjoxNzQ4MzYzMTM5LCJleHAiOjE3NDgzNjY3Mzl9._owYn5-Ildbh950DqEdRB2vdiJ4VJjUXatE_wsQLlwM",
+								"value": "Bearer {{authToken}}",
 								"type": "text"
 							}
 						],
@@ -919,7 +1031,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5001/api/issues/6835c9a17cb614ed5a5d208e",
+							"raw": "http://localhost:5001/api/issues/6835d0b67cb614ed5a5d20c7",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -928,7 +1040,7 @@
 							"path": [
 								"api",
 								"issues",
-								"6835c9a17cb614ed5a5d208e"
+								"6835d0b67cb614ed5a5d20c7"
 							]
 						}
 					},
@@ -980,7 +1092,14 @@
 					],
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -1000,6 +1119,45 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "testEmail",
+			"value": "userexample.com",
+			"type": "string"
+		},
+		{
+			"key": "testPassword",
+			"value": "2000-04-04",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
 		}
 	]
 }

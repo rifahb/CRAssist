@@ -73,7 +73,7 @@ export default function Login() {
               />
             </div>
             <div>
-              <label className="block mb-1 text-sm font-medium text-white" htmlFor="password">Password</label>
+              <label className="block mb-1 text-sm font-medium text-white" htmlFor="dob">Date of Birth</label>
               <input
                  id="dob"
                 type="text"

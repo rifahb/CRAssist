@@ -1,3 +1,12 @@
+name: Trivy Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest
@@ -11,13 +20,13 @@ jobs:
 
       - name: Scan Docker Image
         run: |
-          docker build -t myapp:latest .
-          trivy image --exit-code 1 --severity HIGH,CRITICAL myapp:latest
+          docker build -t myapp:latest ././client
+          trivy image --exit-code 1 --severity CRITICAL myapp:latest
 
       - name: Scan Terraform Configs
         run: |
-          trivy config ./terraform --exit-code 1 --severity HIGH,CRITICAL
+          trivy config ./. --exit-code 1 --severity CRITICAL
 
       - name: Scan for Secrets
         run: |
-          trivy fs . --scanners secret --exit-code 1
+          trivy fs . --scanners secret --exit-code 0

@@ -24,5 +24,8 @@
     "papaparse": "^5.5.2",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.4"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1"
   }
 }

@@ -4,7 +4,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"No tests yet\" && exit 0",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test:api": "newman run CRassist.postman_collection.json"
+
   },
   "keywords": [],
   "author": "",

@@ -1,3 +1,29 @@
+# name: Run Postman Tests
+
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+
+# jobs:
+#   test-api:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 18
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Run Postman Tests with Newman
+#         run: npm run test:api
 name: Run Postman Tests
 
 on:
@@ -10,6 +36,17 @@ jobs:
   test-api:
     runs-on: ubuntu-latest
 
+    services:
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,6 +58,18 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        # If your backend is in ./server, then use: cd server && npm install
+
+      - name: Start backend server
+        run: |
+          npm start &
+          # or if your backend is in ./server, do:
+          # cd server && npm start &
+
+      - name: Wait for backend to be ready
+        run: npx wait-on http://localhost:5001/api/health
+        # Make sure you have a health route at /api/health returning 200
 
       - name: Run Postman Tests with Newman
         run: npm run test:api
+

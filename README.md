@@ -55,3 +55,4 @@ Security:
 HashiCorp Vault: Secures and manages sensitive credentials.
 
 AWS IAM (or equivalent): Manages role-based access control.
+# Minor update to trigger SonarCloud

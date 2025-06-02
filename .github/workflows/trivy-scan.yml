@@ -29,4 +29,4 @@ jobs:
 
       - name: Scan for Secrets
         run: |
-          trivy fs . --scanners secret --exit-code 0
+          trivy fs . --scanners secret --exit-code 1

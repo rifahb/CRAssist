@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"No tests yet\" && exit 0",
     "start": "node server.js",
-    "test:api": "newman run CRassist.postman_collection2.json"
+    "test:api": "newman run CRassistCopyhope.postman_collection.json"
 
   },
   "keywords": [],

@@ -10,7 +10,9 @@ router.post("/", verifyToken, async (req, res) => {
     if (!feedback) return res.status(400).json({ message: "Feedback is required" });
     const fb = new Feedback({ user: req.user.id, feedback });
     await fb.save();
-    res.status(201).json({ message: "Feedback submitted" });
+
+    // Return the new feedback object (with _id) so tests can grab ID
+    res.status(201).json({ message: "Feedback submitted", feedback: fb });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }

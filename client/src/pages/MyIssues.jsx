@@ -50,7 +50,7 @@ export default function MyIssues() {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5001/api/issues/${id}`,
+        `http://localhost:5001/api/issues/${issueId}`,
         { title: editTitle, description: editDescription, status: editStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -68,7 +68,7 @@ export default function MyIssues() {
     if (!window.confirm("Delete this issue?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5001/api/issues/${id}`, {
+      await axios.delete(`http://localhost:5001/api/issues/${issueId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setIssues(issues.filter(issue => issue._id !== id));

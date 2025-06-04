@@ -1,0 +1,25 @@
+- hosts: crassist
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Clone your repo
+      git:
+        repo: git@github.com:rifahb/CRAssist.git
+        dest: /home/ubuntu/CRAssist
+        key_file: /home/rifah/.ssh/id_rsa
+        accept_hostkey: yes
+
+    - name: Start containers
+      shell: |
+        cd /home/ubuntu/CRAssist
+        docker-compose up -d --build

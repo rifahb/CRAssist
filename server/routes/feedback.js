@@ -8,7 +8,7 @@ router.post("/", verifyToken, async (req, res) => {
   try {
     const { feedback } = req.body;
     if (!feedback) return res.status(400).json({ message: "Feedback is required" });
-    const fb = new Feedback({ user: req.user.id, feedback });
+    const fb = new Feedback({ user: req.user.id, feedback, class: req.user.class  });
     await fb.save();
 
     // Return the new feedback object (with _id) so tests can grab ID
@@ -21,7 +21,7 @@ router.post("/", verifyToken, async (req, res) => {
 // Get all feedbacks (CR only)
 router.get("/", verifyToken, async (req, res) => {
   if (req.user.role !== "cr"&& req.user.role !="teacher") return res.status(403).json({ message: "Forbidden" });
-  const feedbacks = await Feedback.find().populate("user", "name usn email");
+  const feedbacks = await Feedback.find({ class: req.user.class }).populate("user", "name usn email");
   if (req.user.role === "teacher") {
     const anonymousFeedbacks = feedbacks.map(fb => ({
       _id: fb._id,

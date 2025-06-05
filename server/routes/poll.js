@@ -12,7 +12,8 @@ router.post("/", verifyToken, async (req, res) => {
     const poll = await Poll.create({
       question,
       options: options.map(text => ({ text })),
-      createdBy: req.user.usn
+      createdBy: req.user.usn,
+      class: req.user.class
     });
     res.status(201).json(poll);
   } catch (err) {
@@ -24,7 +25,7 @@ router.post("/", verifyToken, async (req, res) => {
 // Get all polls
 router.get("/", verifyToken, async (req, res) => {
   try {
-    const polls = await Poll.find().sort({ createdAt: -1 });
+    const polls = await Poll.find({ class: req.user.class }).sort({ createdAt: -1 });
     res.json(polls);
   } catch (err) {
      console.error(err); 

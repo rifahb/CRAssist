@@ -208,7 +208,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+const token = localStorage.getItem("token"); 
 // Simple bin and pen icons
 const BinIcon = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -237,17 +237,21 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  async function fetchAnnouncements() {
-    setLoading(true);
-    try {
-      const res = await axios.get("http://localhost:5001/api/announcements");
-      setAnnouncements(res.data);
-    } catch {
-      setAnnouncements([]);
-    } finally {
-      setLoading(false);
-    }
+ async function fetchAnnouncements() {
+  setLoading(true);
+  try {
+    const res = await axios.get("http://localhost:5001/api/announcements", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    setAnnouncements(res.data);
+  } catch {
+    setAnnouncements([]);
+  } finally {
+    setLoading(false);
   }
+}
 
   useEffect(() => {
     fetchAnnouncements();

@@ -5,6 +5,7 @@ const pollSchema = new mongoose.Schema({
   options: [{ text: String, votes: { type: Number, default: 0 } }],
   createdBy: { type: String, required: true },
   voters: [{ type: String }],
+  class: { type: String, required: true }, 
   createdAt: { type: Date, default: Date.now }
 });
 

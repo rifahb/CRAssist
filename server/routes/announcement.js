@@ -17,9 +17,11 @@ const upload = multer({ storage });
 
 
 // Get all announcements (no auth required)
-router.get('/', async (req, res) => {
+router.get('/',protect, async (req, res) => {
   try {
-    const announcements = await Announcement.find().sort({ date: -1 }).populate("user", "_id role name");
+    const user = await require('../models/User').findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const announcements = await Announcement.find({ class: user.class }).sort({ date: -1 }).populate("user", "_id role name");
     res.json(announcements);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching announcements' });
@@ -36,7 +38,8 @@ router.post(
     try {
       const { title, content } = req.body;
       const fileUrl = req.file ? `/uploads/${req.file.filename}` : null;
-      const announcement = new Announcement({ title, content, fileUrl, user: req.user.id  });
+       const user = await require('../models/User').findById(req.user.id); // <-- Add this line
+      const announcement = new Announcement({ title, content, fileUrl, user: req.user.id ,class: user.class });
       await announcement.save();
       res.status(201).json(announcement);
     } catch (err) {

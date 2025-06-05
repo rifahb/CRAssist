@@ -7,6 +7,7 @@ const issueSchema = new mongoose.Schema({
   description: { type: String, required: true },
   date: { type: Date, default: Date.now },
   status: { type: String, enum: ["open", "resolved"], default: "open" },
+  class: { type: String, required: true } // <-- Add this line
 });
 
 module.exports = mongoose.model("Issue", issueSchema);

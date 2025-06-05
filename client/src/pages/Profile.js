@@ -12,12 +12,17 @@ export default function Profile() {
     console.log("User data:", user); // This will help you debug if the user data is coming in correctly
   }, [user]);
 
-  useEffect(() => {
-    axios.get("http://localhost:5001/api/announcements")
-      .then((response) => setAnnouncements(response.data))
-      .catch((error) => console.error("Error fetching announcements:", error));
-  }, []);
-
+ useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+  axios.get("http://localhost:5001/api/announcements", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((response) => setAnnouncements(response.data))
+    .catch((error) => console.error("Error fetching announcements:", error));
+}, []);
   const handleLogout = () => {
     logout();  // Clear user session, redirect to login
   };

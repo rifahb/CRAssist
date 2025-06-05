@@ -23,7 +23,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, usn: user.usn, role: user.role , name: user.name, email: user.email },
+      { id: user._id, usn: user.usn, role: user.role , name: user.name, email: user.email, class: user.class},
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -38,11 +38,11 @@ router.post("/login", async (req, res) => {
 
 // (Optional) POST /api/auth/register
 router.post("/register", async (req, res) => {
-  const { name, email, usn, dob, role } = req.body;
+  const { name, email, usn, dob, role, class: userClass } = req.body;
 
   try {
-    const user = await User.create({ name, email, usn, dob, role });
-    res.status(201).json({ message: "User registered", user: { usn, role } });
+    const user = await User.create({ name, email, usn, dob, role, class: userClass });
+    res.status(201).json({ message: "User registered", user: { usn, role, class: userClass } });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

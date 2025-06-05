@@ -8,13 +8,13 @@ const router = express.Router();
 router.post("/", verifyToken, async (req, res) => {
   const { title, description } = req.body;
   const usn = req.user.usn;
-
+  const userClass = req.user.class;
   if (!title || !description) {
     return res.status(400).json({ message: "Title and description are required" });
   }
 
   try {
-    const issue = new Issue({ usn, title, description });
+    const issue = new Issue({ usn, title, description, class: userClass }); // <-- FIXED
     await issue.save();
     res.status(201).json({ message: "Issue submitted successfully" });
   } catch (err) {
@@ -28,7 +28,7 @@ router.get("/", verifyToken, async (req, res) => {
     return res.status(403).json({ message: "Access denied" });
   }
 
-  const issues = await Issue.find().sort({ date: -1 });
+  const issues = await Issue.find({ class: req.user.class }).sort({ date: -1 });
   res.json(issues);
 });
 router.get("/my", verifyToken, async (req, res) => {
